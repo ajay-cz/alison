@@ -1,0 +1,230 @@
+{% extends "base_template.html" %}
+{%- block container -%}
+
+<div class="row">
+    <div class="col s3 card-panel hoverable">
+            <div class="row center center-align">
+                <a class="btn btn-flat lighten-2 teal disabled">Apply Filters</a>
+            </div>
+            <div class="row">
+                <form action="/search" class="col s12" id="filters" name="filters">
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <!-- Media -->
+                            <p class="col s4">
+                                <input name="media" type="radio" id="audio" value="audio" {% if request.args.get('media', '') in ['audio'] -%}checked="checked"{%- endif %}/>
+                                <label for="audio">Audio</label>
+                            </p>
+                            <p class="col s4">
+                                <input name="media" type="radio" id="video" value="video" {% if request.args.get('media', '') in ['video'] -%}checked="checked"{%- endif %}/>
+                                <label for="video">Video</label>
+                            </p>
+                            <p class="col s4">
+                                <input name="media" type="radio" id="all" value="" {% if request.args.get('media', '') not in ['audio', 'video'] -%}checked="checked"{%- endif %}/>
+                                <label for="all">Both</label>
+                            </p>
+                        </div>
+                        <!-- Is clip -->
+                        <div class="input-field col s4">
+                            <p>
+                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') == 'true' -%}checked="checked" {%- endif %} name="is_clip"/>
+                                <label for="is_clip">Is Clip</label>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Master Brand -->
+                        <div class="input-field col s6">
+                            <input id="master_brand" type="text" name="master_brand" value="{{request.args.get('master_brand', '')}}">
+                            <label for="master_brand">Master Brand</label>
+                        </div>
+                        <!-- Service -->
+                        <div class="input-field col s6">
+                            <input type="text" id="service" name="service" value="{{request.args.get('service', '')}}">
+                            <label for="service">Service</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Master Brand -->
+                        <div class="input-field col s6">
+                            <input id="title.Series Title" type="text" name="title.Series Title" value="{{request.args.get('title.Series Title', '')}}">
+                            <label for="title.Series Title">Series Title</label>
+                        </div>
+                        <!-- Service -->
+                        <div class="input-field col s6">
+                            <input type="text" id="title.Episode Title" name="title.Episode Title" value="{{request.args.get('title.Episode Title', '')}}">
+                            <label for="title.Episode Title">Episode Title</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Start & End Time -->
+                        <div class="input-field col s6">
+                            <input id="start_time" type="date" class="datepicker" name="start_time" value="{{request.args.get('start_time', '')}}">
+                            <label for="start_time">Start Time</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="end_time" type="date" class="datepicker" name="end_time" value="{{request.args.get('end_time', '')}}">
+                            <label for="end_time">End Time</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Categories & Tags -->
+                        <div class="input-field col s6">
+                            <input name="categories" id="categories" type="date" class="datepicker">
+                            <label for="start_time">Categories</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <input name="tags" id="tags" type="date" class="datepicker">
+                            <label for="end_time">Tags</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                         <button class="btn teal waves-effect waves-light" type="submit">Apply Filters
+                            <i class="material-icons right">send</i>
+                         </button>
+                        <button class="btn teal waves-effect waves-light" type="reset">Reset Filters
+                            <i class="material-icons right">clear_all</i>
+                         </button>
+                    </div>
+                </form>
+            </div>
+            <!--</li>-->
+        <!--</ul>-->
+    </div>
+    <div class="col s9 "> {# main-panel - Change the Width on style.css if u change s9 to something else #}
+        <div class="section card-panel hoverable">
+            <div class="row">
+                  <div class="card-panel"> {{result_count}} Results Found</div>
+            </div>
+            {%- if result_count > 0 -%}
+                {%- set nav_left = 'disabled' -%}
+                    {%- set nav_right = 'waves-effect' -%}
+                    {%- if result_count < (skip + 1) * page_count -%}
+                        {%- set nav_right = 'disabled' -%}
+                    {%- endif -%}
+                {%- if result_count > (skip + 1) * page_count and skip > 0 -%}
+                    {%- set nav_left = 'waves-effect' -%}
+                {%- endif -%}
+                <div class="row">
+                <ul class="center pagination">
+
+                    <li class="{{nav_left}}">
+                        <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                    </li>
+                    {%- for p in range(25) -%}
+                        {%- if p == skip -%}
+                            <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                        {%- else -%}
+                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                        {%- endif -%}
+                    {%- endfor -%}
+
+                    <li class="{{nav_right}}">
+                        <a href="{{- request.base_url -}}?page={{- skip + 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                    </li>
+                </ul>
+            </div>
+            {%- endif -%}
+                <div class="row">
+             {#   {u'service': u'Bbc Radio Four', u'tags': [u''], u'media': u'Audio', u'start_time': u'2012-08-13', u'title': {u'Series Title': u'What Chance Change?', u'Episode Title': u'Episode 1', u'Brand Name': u'Micky Flanagan'}, u'is_clip': True, u'end_time': u'2012-08-20', u'master_brand': u'Bbc Radio Four', u'_id': ObjectId('5921e8e2531e701c507b942b'), u'categories': [u'Comedy', u'Standup']} #}
+                {%- if request.args.get('mode') != 'table' -%}
+                    {%- for item in filtered_data -%}
+                        {%- for column in filtered_data|slice(2) %}
+                            <div class="col s6">
+                                {%- for item in column %}
+                                    <div class="card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
+                                    <div class="card-stacked">
+                                        <div class="card-content">
+                                            <div class="row">
+                                                <div class="left-align col s4"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') }}</div>
+                                                <div class="center-align col s4">{{ item.media|default('-N.A-') }}</div>
+                                                <div class="right-align col s4"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s3 left-align label-left">Series Title :</div>
+                                                <div class="col s9 right-align label-right">{{ item.title['Series Title']|default('-N.A-') }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s3 left-align label-left">Episode Title :</div>
+                                                <div class="col s9 right-align label-right">{{ item.title['Episode Title']|default('-N.A-') }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s3 left-align label-left">Master Brand :</div>
+                                                <div class="col s9 right-align label-right">{{ item.master_brand|default('-N.A-') }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s3 left-align label-left">Service :</div>
+                                                <div class="col s9 right-align label-right">{{ item.service|default('-N.A-') }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s1 left-align label-left">Tags</div>
+                                                <div class="col s11 right-align label-right">
+                                                    {%- for tag in item.tags -%}
+                                                        {%- if tag -%}
+                                                            <div class="chip">
+                                                                {{ tag }}
+                                                            </div>
+                                                        {%- else -%}
+                                                            -N.A-
+                                                        {%- endif -%}
+                                                    {%- endfor -%}
+                                                    {%- if not item.tags -%}-N.A-{%- endif -%}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col s1 left-align label-left">Categories</div>
+                                                <div class="col s11 right-align label-right">
+                                                    {%- for cat in item.categories -%}
+                                                        <div class="chip">
+                                                            {{ cat }}
+                                                        </div>
+                                                    {%- endfor -%}
+                                                    {%- if not item.categories -%}-N.A-{%- endif -%}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%- endfor %}
+                            </div>
+                        {%- endfor %}
+                    {%- endfor -%}
+                {%- endif -%}
+            </div>
+            {%- if result_count > 0 -%}
+                <div class="row">
+                <ul class="center pagination">
+
+                    <li class="{{nav_left}}">
+                        <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                    </li>
+                    {%- for p in range(25) -%}
+                        {%- if p == skip -%}
+                            <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                        {%- else -%}
+                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                        {%- endif -%}
+                    {%- endfor -%}
+
+                    <li class="{{nav_right}}">
+                        <a href="{{- request.base_url -}}?page={{- skip + 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                    </li>
+                </ul>
+            </div>
+            {%- endif -%}
+        </div>
+    </div>
+</div>
+
+{%- endblock -%}
+{# block scripts -%}
+    {{ super() }}
+    <script>
+        (function($){
+            $(function(){
+                $('.button-collapse').sideNav('show');
+            })
+        })(jQuery);
+    </script>
+{%- endblock #}
+

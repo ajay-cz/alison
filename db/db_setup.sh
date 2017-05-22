@@ -1,0 +1,1 @@
+mongoimport --db kate --collection bbc --drop --file "./db/data.json"
