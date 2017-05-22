@@ -7,8 +7,8 @@ from flask import Flask, render_template, request
 from pymongo import MongoClient
 
 # configuration
-MONGODB_HOST = 'localhost'
-MONGODB_PORT = 27017
+MONGODB_HOST = '205.147.96.143'
+MONGODB_PORT = 10065
 MONGODB_NAME = 'kate'
 
 # Flask app
