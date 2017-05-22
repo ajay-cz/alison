@@ -1,12 +1,15 @@
 **Setup**
 
 virtualenv kate
+
 cd kate
+
 Scripts/activate
 
 unzip the code into kate directory
 
 pip install -r requirements.txt
+
 gunicorn runserver:app
 
 ( if the above gunicorn doesnt work, just run  ' python runserver.py ' )
