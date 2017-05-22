@@ -27,7 +27,7 @@
                         <!-- Is clip -->
                         <div class="input-field col s4">
                             <p>
-                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') == 'true' -%}checked="checked" {%- endif %} name="is_clip"/>
+                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
                                 <label for="is_clip">Is Clip</label>
                             </p>
                         </div>
@@ -111,8 +111,8 @@
                     <li class="{{nav_left}}">
                         <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
                     </li>
-                    {%- for p in range(25) -%}
-                        {%- if p == skip -%}
+                    {%- for p in range(10) -%}
+                        {%- if p+1 == skip -%}
                             <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
                         {%- else -%}
                             <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
@@ -128,17 +128,24 @@
                 <div class="row">
              {#   {u'service': u'Bbc Radio Four', u'tags': [u''], u'media': u'Audio', u'start_time': u'2012-08-13', u'title': {u'Series Title': u'What Chance Change?', u'Episode Title': u'Episode 1', u'Brand Name': u'Micky Flanagan'}, u'is_clip': True, u'end_time': u'2012-08-20', u'master_brand': u'Bbc Radio Four', u'_id': ObjectId('5921e8e2531e701c507b942b'), u'categories': [u'Comedy', u'Standup']} #}
                 {%- if request.args.get('mode') != 'table' -%}
+                    {%- set cols = request.args.get('cols', 1)|int -%}
+                    {%- if cols < 1 -%}
+                    {%- set cols = 1 %}
+                    {%- elif cols > 3 -%}
+                    {%- set cols = 3 %}
+                    {%- endif -%}
                     {%- for item in filtered_data -%}
-                        {%- for column in filtered_data|slice(2) %}
-                            <div class="col s6">
+                        {%- for column in filtered_data|slice(cols|int) %}
+                            <div class="col s{{- (12/cols|int)|int -}}">
                                 {%- for item in column %}
                                     <div class="card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
                                     <div class="card-stacked">
                                         <div class="card-content">
                                             <div class="row">
-                                                <div class="left-align col s4"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') }}</div>
-                                                <div class="center-align col s4">{{ item.media|default('-N.A-') }}</div>
-                                                <div class="right-align col s4"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') }}</div>
+                                                <div class="left-align col s3"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') }}</div>
+                                                <div class="center-align col s3">{{ item.media|default('-N.A-') }}</div>
+                                                <div class="center-align col s3">{%- if item.is_clip in [True, 'on', 'true', '1', 'yes', 't', 'y'] -%}<i class="material-icons">videocam</i> {%- else -%}<i class="material-icons">videocam_off</i>{%- endif -%} </div>
+                                                <div class="right-align col s3"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s3 left-align label-left">Series Title :</div>
@@ -198,7 +205,7 @@
                     <li class="{{nav_left}}">
                         <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
                     </li>
-                    {%- for p in range(25) -%}
+                    {%- for p in range(10) -%}
                         {%- if p == skip -%}
                             <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
                         {%- else -%}

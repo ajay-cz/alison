@@ -6,10 +6,16 @@ from flask import Flask, render_template, request
 
 from pymongo import MongoClient
 
+dev = True
 # configuration
-MONGODB_HOST = '205.147.96.143'
-MONGODB_PORT = 10065
-MONGODB_NAME = 'kate'
+if dev:
+    MONGODB_HOST = 'localhost'
+    MONGODB_PORT = 27017
+    MONGODB_NAME = 'kate'
+else:
+    MONGODB_HOST = '205.147.96.143'
+    MONGODB_PORT = 10065
+    MONGODB_NAME = 'kate'
 
 # Flask app
 app = Flask(__name__)
@@ -26,6 +32,7 @@ PAGE_LIMIT = 25
 
 truthy = frozenset(('t', 'true', 'y', 'yes', 'on', '1'))
 
+
 def asbool(s):
     """ Return the boolean value ``True`` if the case-lowered value of string
     input ``s`` is any of ``t``, ``true``, ``y``, ``on``, or ``1``, otherwise
@@ -39,10 +46,11 @@ def asbool(s):
     s = str(s).strip()
     return s.lower() in truthy
 
+
 @app.route('/')
 def home_page():
     """
-
+    Home Page
     :return:
     """
 
@@ -50,8 +58,8 @@ def home_page():
 
 
 @app.route('/search')
-def data_list():
-    """
+def search_list():
+    """ Search Page
 
     :return:
     """
@@ -77,8 +85,10 @@ def data_list():
                         _value = re.compile(re.escape(_value), re.IGNORECASE)
                         _query.update({_filter: {'$regex': _value, '$options': 'i'}})
                 if _filter in ['categories', 'tags']:
+
                     if _value:
-                        _query.update({_filter : {'$in': _value.split(',')}})
+                        # _query.update({_filter: {'$in': _value.split(',')}})
+                        _query.update({_filter: {'$elemMatch': {'$regex': _value, '$options': 'i'}}})
                 if _filter in ['end_time']:
                     if _value:
                         _query.update({_filter: {'$lte': _value}})
@@ -86,19 +96,28 @@ def data_list():
                     if _value:
                         _query.update({_filter: {'$gte': _value}})
 
+        if not params.get('is_clip'):
+            _query.update({'is_clip': False})
+
     print(_query)
     print(skip_page)
     print(requested_page_count)
-    filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count + 1)).sort([('start_time', -1)])
+    filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count + 1)).sort(
+        [('start_time', -1)])
+
+    count = filtered_results.count()
 
     # all_keys = {k for k in chain(*filtered_results)}
     # filtered_results.rewind()
 
+    pagination_links = []
+    link_template = '%s' % (request.path)
+    print link_template
     return render_template(
         'search.html',
         filtered_data=filtered_results,
         all_keys=[],
-        result_count=filtered_results.count(),
+        result_count=count,
         skip=skip_page,
         page_count=requested_page_count
     )
