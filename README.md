@@ -14,14 +14,21 @@ gunicorn runserver:app
 This would start the application on port 5000 and will be accessible at http://127.0.0.1:5000/
 
 
-** Technology **
+**Technology**
+
 Python
+
 Flask
+
 MongoDB
-Mongokit to connect with Mongo
+
+Mongokit ORM to connect with Mongo
+
 Jinja for HTML Templates
+
 Materialize
 
-** special access **
+**special access**
+
 add query string cols=2 to view a 2 column layout. By default, the search page is a single column layout
 
