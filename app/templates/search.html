@@ -144,15 +144,15 @@
         <!--</ul>-->
     </div>
     <div class="col s8 main-panel"> {# main-panel - Change the Width on style.css if u change s9 to something else #}
-        <div class="progress hidden" id="loader">
-            <div class="indeterminate"></div>
+        <div class="progress hidden " id="loader">
+            <div class="indeterminate blue-grey"></div>
         </div>
         <div class="section card-panel hoverable">
             <div class="row">
                   <div class="card-panel">
                       <div class="col s6 left-align">Total {{total_count}} Results Found.</div>
                       {%- if result_count > 0 -%}
-                      <div class="col s6 right-align">Showing {{result_count }} of Page {{ request.args.get('page', 1) }}</div>
+                        <div class="col s6 right-align">Showing {{result_count }} results of Page {{ request.args.get('page', 1) }}</div>
                       {%- endif -%}
                   </div>
             </div>
@@ -180,7 +180,7 @@
                     {%- set nav_left = 'waves-effect' -%}
                 {%- endif -%}
                 <div class="row">
-                <ul class="center pagination">
+                    <ul class="center pagination">
 
                     <li class="{{nav_left}}">
                         <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
@@ -197,7 +197,7 @@
                         <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
                     </li>
                 </ul>
-            </div>
+                </div>
             {%- endif -%}
                 <div class="row">
              {#   {u'service': u'Bbc Radio Four', u'tags': [u''], u'media': u'Audio', u'start_time': u'2012-08-13', u'title': {u'Series Title': u'What Chance Change?', u'Episode Title': u'Episode 1', u'Brand Name': u'Micky Flanagan'}, u'is_clip': True, u'end_time': u'2012-08-20', u'master_brand': u'Bbc Radio Four', u'_id': ObjectId('5921e8e2531e701c507b942b'), u'categories': [u'Comedy', u'Standup']} #}
@@ -213,7 +213,7 @@
                         {%- for column in filtered_data|slice(cols|int) %}
                             <div class="col s{{- (12/cols|int)|int -}}">
                                 {%- for item in column %}
-                                    <div class="card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
+                                    <div class="blue-grey lighten-5 card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
                                     <div class="card-stacked">
                                         <div class="card-content">
                                             <div class="row header-label">
