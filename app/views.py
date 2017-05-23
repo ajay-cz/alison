@@ -8,7 +8,7 @@ from flask import Flask, render_template, request
 
 from pymongo import MongoClient
 
-dev = True
+dev = False
 # configuration
 if dev:
     MONGODB_HOST = 'localhost'
