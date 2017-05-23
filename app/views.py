@@ -36,13 +36,13 @@ collection_name = 'bbc'
 INIT_PAGE = 0
 PAGE_LIMIT = 25
 
-LOG = logging.getLogger(__name__)
+# LOG = logging.getLogger(__name__)
 
 # add a rotating handler
-handler = RotatingFileHandler(os.path.join('app','logs', 'app.log'), maxBytes=20, backupCount=5)
-LOG.addHandler(handler)
+# handler = RotatingFileHandler(os.path.join('app','logs', 'app.log'), maxBytes=20, backupCount=5)
+# LOG.addHandler(handler)
 
-LOG.setLevel(logging.DEBUG)
+# LOG.setLevel(logging.DEBUG)
 
 
 truthy = frozenset(('t', 'true', 'y', 'yes', 'on', '1'))
@@ -164,7 +164,7 @@ def search_list():
     # as the above line results in the cursor being moved to the end position
     filtered_results.rewind()
 
-    LOG.debug("Skip : %s, Total Count : %s, Result Count : %s" % (skip_page, total_count, _real_count))
+    # LOG.debug("Skip : %s, Total Count : %s, Result Count : %s" % (skip_page, total_count, _real_count))
 
     return render_template(
         'search.html',
