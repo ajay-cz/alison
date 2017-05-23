@@ -2,12 +2,35 @@
 {%- block container -%}
 
 <div class="row">
-    <div class="col s3 card-panel hoverable">
+    <div class="col s4 card-panel hoverable fix-side-nav">
             <div class="row center center-align">
-                <a class="btn btn-flat lighten-2 teal disabled">Apply Filters</a>
+                <a class="btn btn-flat  darken-1 blue-grey disabled">Apply Filters</a>
             </div>
             <div class="row">
                 <form action="/search" class="col s12" id="filters" name="filters">
+                    <div class="row">
+                        <!-- Start & End Time -->
+                        <div class="input-field col s6">
+                            <input id="start_time" type="text" class="1_datepicker" name="start_time" value="{{request.args.get('start_time', '')}}" list="st">
+                            <label for="start_time">Start Time</label>
+                            <datalist id="st">
+                                <option value="">
+                                {%- for value in filter_values.get('start_time', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
+                        </div>
+                        <div class="input-field col s6">
+                            <input id="end_time" type="text" class="1_datepicker" name="end_time" value="{{request.args.get('end_time', '')}}" list="et">
+                            <label for="end_time">End Time</label>
+                            <datalist id="et">
+                                <option value="">
+                                {%- for value in filter_values.get('end_time', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
+                        </div>
+                    </div>
                     <div class="row">
                         <!-- Master Brand -->
                         <div class="input-field col s6">
@@ -57,53 +80,6 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="input-field col s8">
-                            <!-- Media -->
-                            <p class="col s4">
-                                <input name="media" type="radio" id="audio" value="audio" {% if request.args.get('media', '') in ['audio'] -%}checked="checked"{%- endif %}/>
-                                <label for="audio">Audio</label>
-                            </p>
-                            <p class="col s4">
-                                <input name="media" type="radio" id="video" value="video" {% if request.args.get('media', '') in ['video'] -%}checked="checked"{%- endif %}/>
-                                <label for="video">Video</label>
-                            </p>
-                            <p class="col s4">
-                                <input name="media" type="radio" id="all" value="" {% if request.args.get('media', '') not in ['audio', 'video'] -%}checked="checked"{%- endif %}/>
-                                <label for="all">Both</label>
-                            </p>
-                        </div>
-                        <!-- Is clip -->
-                        <div class="input-field col s4">
-                            <p>
-                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in [None, '', 'on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
-                                <label for="is_clip">Is Clip</label>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Start & End Time -->
-                        <div class="input-field col s6">
-                            <input id="start_time" type="date" class="datepicker" name="start_time" value="{{request.args.get('start_time', '')}}" list="st">
-                            <label for="start_time">Start Time</label>
-                            <datalist id="st">
-                                <option value="">
-                                {%- for value in filter_values.get('start_time', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                        <div class="input-field col s6">
-                            <input id="end_time" type="date" class="datepicker" name="end_time" value="{{request.args.get('end_time', '')}}" list="et">
-                            <label for="end_time">End Time</label>
-                            <datalist id="et">
-                                <option value="">
-                                {%- for value in filter_values.get('end_time', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                    </div>
-                    <div class="row">
                         <!-- Categories & Tags -->
                         <div class="input-field col s6">
                             <input name="categories" id="categories" type="text" list="cat">
@@ -131,10 +107,34 @@
                         </div>
                     </div>
                     <div class="row">
-                         <button class="btn teal waves-effect waves-light col s6" type="submit">Apply Filters
+                        <div class="input-field col s8">
+                            <!-- Media -->
+                            <p class="col s4">
+                                <input name="media" type="radio" id="audio" value="audio" {% if request.args.get('media', '') in ['audio'] -%}checked="checked"{%- endif %}/>
+                                <label for="audio">Audio</label>
+                            </p>
+                            <p class="col s4">
+                                <input name="media" type="radio" id="video" value="video" {% if request.args.get('media', '') in ['video'] -%}checked="checked"{%- endif %}/>
+                                <label for="video">Video</label>
+                            </p>
+                            <p class="col s4">
+                                <input name="media" type="radio" id="all" value="" {% if request.args.get('media', '') not in ['audio', 'video'] -%}checked="checked"{%- endif %}/>
+                                <label for="all">Both</label>
+                            </p>
+                        </div>
+                        <!-- Is clip -->
+                        <div class="input-field col s4">
+                            <p>
+                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
+                                <label for="is_clip">Is Clip</label>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                         <button class="btn blue-grey waves-effect waves-light col s5" type="submit">Apply Filters
                             <i class="material-icons right">send</i>
                          </button>
-                         <a class="btn teal waves-effect waves-light col s6" href="/search">Reset Filters
+                         <a class="btn blue-grey waves-effect waves-light col s5 right" href="/search">Reset Filters
                             <i class="material-icons right">clear_all</i>
                          </a>
                     </div>
@@ -143,7 +143,7 @@
             <!--</li>-->
         <!--</ul>-->
     </div>
-    <div class="col s9 "> {# main-panel - Change the Width on style.css if u change s9 to something else #}
+    <div class="col s8 main-panel"> {# main-panel - Change the Width on style.css if u change s9 to something else #}
         <div class="progress hidden" id="loader">
             <div class="indeterminate"></div>
         </div>

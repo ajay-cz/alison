@@ -120,6 +120,8 @@ def search_list():
                 if _filter in ['media']:
                     if _value and _value in ['audio', 'video']:
                         _query.update({'media': _value.title()})
+                        if 'is_clip' not in params:
+                            _query.update({'$or': [{'is_clip': False}, {'is_clip': True}]})
                 # Handle Is Clip Filter
                 if _filter in ['is_clip']:
                     if _value:
@@ -145,9 +147,9 @@ def search_list():
                     if _value:
                         _query.update({_filter: {'$gte': _value}})
         # Handle Is Clip Filter. This is exclusively set here to handle the initial stage when the Clips are unselected
-        print params.keys()
+        # print params.keys()
         if not params.get('is_clip') and not (len(params.keys()) == 1 and 'page' in params.keys()):
-            _query.update({'is_clip': False})
+            _query.update({'$or': [{'is_clip': False}, {'is_clip': True}]})
 
     # Fire the Mongo Mongo Query. _query contains the Filters set
     filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count))

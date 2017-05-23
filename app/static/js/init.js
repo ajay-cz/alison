@@ -25,5 +25,9 @@
         $('#loader').removeClass('hidden');
         $('#filters').submit();
     });
+    $('a').off('click').on('click', function(){
+         $('#loader').addClass('shown');
+         $('#loader').removeClass('hidden');
+    });
   }); // end of document ready
 })(jQuery); // end of jQuery name space
