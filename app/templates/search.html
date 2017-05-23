@@ -82,28 +82,22 @@
                     <div class="row">
                         <!-- Categories & Tags -->
                         <div class="input-field col s6">
-                            <input name="categories" id="categories" type="text" list="cat">
-                            <label for="start_time">Categories</label>
-                            <datalist id="cat">
-                                <option value="">
-                                {%- for value in filter_values.get('categories', []) | sort -%}
-                                    {%- for _v in value -%}
-                                        <option value="{{- _v -}}">
-                                    {%- endfor -%}
+                            <select name="categories" id="categories" multiple>
+                                <option value="" {% if '' not in request.args.get('categories', '') -%}selected{%- endif -%}></option>
+                                {%- for _v in filter_values.get('categories', []) | sort -%}
+                                    <option value="{{- _v -}}" {% if _v in request.args.get('categories', '') -%}selected{%- endif -%}>{{ _v }}</option>
                                 {%- endfor -%}
-                            </datalist>
+                            </select>
+                            <label for="categories">Categories</label>
                         </div>
                         <div class="input-field col s6">
-                            <input name="tags" id="tags" type="text" list="tag">
-                            <label for="end_time">Tags</label>
-                            <datalist id="tag">
-                                <option value="">
-                                {%- for value in filter_values.get('tags', []) | sort -%}
-                                    {%- for _v in value -%}
-                                        <option value="{{- _v -}}">
-                                    {%- endfor -%}
+                            <select name="tags" id="tags" multiple>
+                                <option value="" {% if '' not in request.args.get('tags', '') -%}selected{%- endif -%}></option>
+                                {%- for _v in filter_values.get('tags', []) | sort -%}
+                                        <option value="{{- _v -}}" {% if _v in request.args.get('tags', '') -%}selected{%- endif -%}>{{ _v }}</option>
                                 {%- endfor -%}
-                            </datalist>
+                            </select>
+                            <label for="tags">Tags</label>
                         </div>
                     </div>
                     <div class="row">
@@ -128,6 +122,7 @@
                                 <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
                                 <label for="is_clip">Is Clip</label>
                             </p>
+                            <input type="hidden" id="is_clip_a" name="is_clip_a" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}value="on" {%- else -%}value="off" {%- endif -%}>
                         </div>
                     </div>
                     <div class="row">
@@ -149,10 +144,10 @@
         </div>
         <div class="section card-panel hoverable">
             <div class="row">
-                  <div class="card-panel">
-                      <div class="col s6 left-align">Total {{total_count}} Results Found.</div>
+                  <div class="card">
+                      <div class="col s6 left-align blue-grey-text text-darken-4">Total {{total_count}} Results Found.</div>
                       {%- if result_count > 0 -%}
-                        <div class="col s6 right-align">Showing {{result_count }} results of Page {{ request.args.get('page', 1) }}</div>
+                        <div class="col s6 right-align blue-grey-text text-darken-4">Showing {{result_count }} results of Page {{ request.args.get('page', 1) }}</div>
                       {%- endif -%}
                   </div>
             </div>
@@ -179,7 +174,7 @@
                 {%- if request.args.get('page', 1) > 1 and  total_pages > 1-%}
                     {%- set nav_left = 'waves-effect' -%}
                 {%- endif -%}
-                <div class="row">
+                <div class="row blue-grey-text text-darken-4">
                     <ul class="center pagination">
 
                     <li class="{{nav_left}}">
@@ -187,7 +182,7 @@
                     </li>
                     {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
                         {%- if p == request.args.get('page', 1) | int -%}
-                            <li class="active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
+                            <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
                         {%- else -%}
                             <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
                         {%- endif -%}
@@ -215,8 +210,8 @@
                                 {%- for item in column %}
                                     <div class="blue-grey lighten-5 card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
                                     <div class="card-stacked">
-                                        <div class="card-content">
-                                            <div class="row header-label">
+                                        <div class="card-content blue-grey-text text-darken-4">
+                                            <div class="row ">
                                                 <div class="left-align col s3">Start Time</div>
                                                 <div class="center-align col s3">Media Type</div>
                                                 <div class="center-align col s3">Clips </div>
@@ -293,7 +288,7 @@
                     </li>
                     {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
                         {%- if p == request.args.get('page', 1) | int -%}
-                            <li class="active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
+                            <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
                         {%- else -%}
                             <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
                         {%- endif -%}

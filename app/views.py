@@ -27,6 +27,7 @@ else:
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.debug = True
+app.jinja_env.add_extension('jinja2.ext.do')
 
 # DB Defaults
 connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
@@ -80,7 +81,12 @@ def __merge_filter_values(c):
     :return: dict A dict of Filters
     """
     results = defaultdict(set)
+    _tags = []
+    _cats = []
     for i in c:
+        _tags.extend(i.get('tags', []))
+        _cats.extend(i.get('categories', []))
+
         results['service'].add(i.get('service', ''))
         results['Series Title'].add(i.get('title', {}).get('Series Title', ''))
         results['Episode Title'].add(i.get('title', {}).get('Episode Title', ''))
@@ -89,13 +95,13 @@ def __merge_filter_values(c):
         results['end_time'].add(i.get('end_time', ''))
         results['is_clip'].add(i.get('is_clip', False))
         results['master_brand'].add(i.get('master_brand', False))
-        results['tags'].add(it for it in i.get('tags', []))
-        results['categories'].add(it for it in i.get('categories', []))
 
+    results['tags'] = set(_tags)
+    results['categories'] = set(_cats)
     return results
 
 
-@app.route('/search')
+@app.route('/search', methods=['GET', 'POST'])
 def search_list():
     """ Search Page With Filtering
 
@@ -118,12 +124,12 @@ def search_list():
             if _value:
                 # Handle Media Filter
                 if _filter in ['media']:
-                    if _value and _value in ['audio', 'video']:
+                    if _value and _value.lower() in ['audio', 'video']:
                         _query.update({'media': _value.title()})
                         if 'is_clip' not in params:
                             _query.update({'$or': [{'is_clip': False}, {'is_clip': True}]})
                 # Handle Is Clip Filter
-                if _filter in ['is_clip']:
+                if _filter in ['is_clip_a', 'is_clip']:
                     if _value:
                         _query.update({'is_clip': asbool(_value)})
                 # Handle Master Brand Filter,  Episode Title & Series title.
@@ -134,7 +140,6 @@ def search_list():
                         _query.update({_filter: {'$regex': _value, '$options': 'i'}})
                 # Handle Categories & Tags Filters - Allows a full text search of these attributes
                 if _filter in ['categories', 'tags']:
-
                     if _value:
                         # _query.update({_filter: {'$in': _value.split(',')}})
                         _query.update({_filter: {'$elemMatch': {'$regex': _value, '$options': 'i'}}})
@@ -146,17 +151,17 @@ def search_list():
                 if _filter in ['start_time']:
                     if _value:
                         _query.update({_filter: {'$gte': _value}})
+
         # Handle Is Clip Filter. This is exclusively set here to handle the initial stage when the Clips are unselected
-        # print params.keys()
         if not params.get('is_clip') and not (len(params.keys()) == 1 and 'page' in params.keys()):
             _query.update({'$or': [{'is_clip': False}, {'is_clip': True}]})
 
     # Fire the Mongo Mongo Query. _query contains the Filters set
     filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count))
-    # .sort([('start_time', -1)])
 
     # Total Number of Results
     total_count = filtered_results.count(with_limit_and_skip=False)
+
     # Number of Results in this Query
     _real_count = filtered_results.count(with_limit_and_skip=True)
 
@@ -167,7 +172,6 @@ def search_list():
     # as the above line results in the cursor being moved to the end position
     filtered_results.rewind()
 
-    # LOG.debug("Skip : %s, Total Count : %s, Result Count : %s" % (skip_page, total_count, _real_count))
     print _query
     return render_template(
         'search.html',

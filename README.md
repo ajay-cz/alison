@@ -35,3 +35,7 @@ Materialize
 
 add query string cols=2 to view a 2 column layout. By default, the search page is a single column layout
 
+
+**Overview**
+
+This is a sample Web Application created with Python Flask with MongoDB as the Backend.

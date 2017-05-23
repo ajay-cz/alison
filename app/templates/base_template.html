@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <link href="/static/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-  <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="/static/css/style.css?v=0.1" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
 <body>
 <div class="navbar-fixed">
@@ -27,7 +27,7 @@
   </nav>
 </div>
 
-  <div class="row">
+  <div class="row" style="min-height: 660px;">
       {%- block container -%} {%- endblock -%}
   </div>
 
@@ -71,7 +71,7 @@
   <!--  Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="/static/js/materialize.js"></script>
-  <script src="/static/js/init.js"></script>
+  <script src="/static/js/init.js?v=0.1"></script>
  {%- endblock -%}
   </body>
 </html>
