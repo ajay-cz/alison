@@ -75,7 +75,7 @@
                         <!-- Is clip -->
                         <div class="input-field col s4">
                             <p>
-                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
+                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in [None, '', 'on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
                                 <label for="is_clip">Is Clip</label>
                             </p>
                         </div>
