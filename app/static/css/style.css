@@ -56,6 +56,9 @@ footer.page-footer {
   margin: 0;
 }
 
+
+
+# Custom Styles
 .label-left {
     font-size: 0.8em;
     float: left;
@@ -75,4 +78,16 @@ footer.page-footer {
 
 datalist {
     display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.shown {
+    display: block !important;
+}
+
+.header-label {
+    font-size: 0.7em;
 }

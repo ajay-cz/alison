@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+import logging
+import os
 from collections import defaultdict
 import math
 from itertools import chain
 
 import re
+from logging.handlers import RotatingFileHandler
+
 from flask import Flask, render_template, request
 
 from pymongo import MongoClient
@@ -31,6 +35,15 @@ collection_name = 'bbc'
 
 INIT_PAGE = 0
 PAGE_LIMIT = 25
+
+LOG = logging.getLogger(__name__)
+
+# add a rotating handler
+handler = RotatingFileHandler(os.path.join('app','logs', 'app.log'), maxBytes=20, backupCount=5)
+LOG.addHandler(handler)
+
+LOG.setLevel(logging.DEBUG)
+
 
 truthy = frozenset(('t', 'true', 'y', 'yes', 'on', '1'))
 
@@ -60,10 +73,11 @@ def home_page():
 
 
 def __merge_filter_values(c):
-    """
+    """ Utility method to Read & Merge the values of all filters' values. This is the method which helps with data for Auto-populating the
+    Filters
 
     :param c:
-    :return:
+    :return: dict A dict of Filters
     """
     results = defaultdict(set)
     for i in c:
@@ -83,60 +97,74 @@ def __merge_filter_values(c):
 
 @app.route('/search')
 def search_list():
-    """ Search Page
+    """ Search Page With Filtering
 
     :return:
     """
+    # initial page number
     page_number = int(request.args.get('page', INIT_PAGE))
+
+    # Number of items to be displayed on the search listing page
     requested_page_count = int(request.args.get('item_count', PAGE_LIMIT))
 
     skip_page = (int(page_number) - 1) * requested_page_count if page_number > 0 else 0
 
+    # Filtering Logic. this adds the Filters to the Mongo Query, depending on the Filters Chosen
     _query = {}
     params = request.args
     if params:
         for _filter in params.keys():
             _value = params.get(_filter, None)
             if _value:
+                # Handle Media Filter
                 if _filter in ['media']:
                     if _value and _value in ['audio', 'video']:
                         _query.update({'media': _value.title()})
+                # Handle Is Clip Filter
                 if _filter in ['is_clip']:
                     if _value:
                         _query.update({'is_clip': asbool(_value)})
+                # Handle Master Brand Filter,  Episode Title & Series title.
+                # This allows a full text search on these fields
                 if _filter in ['master_brand', 'service', 'title.Episode Title', 'title.Series Title']:
                     if _value:
                         _value = re.compile(re.escape(_value), re.IGNORECASE)
                         _query.update({_filter: {'$regex': _value, '$options': 'i'}})
+                # Handle Categories & Tags Filters - Allows a full text search of these attributes
                 if _filter in ['categories', 'tags']:
 
                     if _value:
                         # _query.update({_filter: {'$in': _value.split(',')}})
                         _query.update({_filter: {'$elemMatch': {'$regex': _value, '$options': 'i'}}})
+                # Handle End Times filter
                 if _filter in ['end_time']:
                     if _value:
                         _query.update({_filter: {'$lte': _value}})
+                # Handle Start Time Filter
                 if _filter in ['start_time']:
                     if _value:
                         _query.update({_filter: {'$gte': _value}})
-
+        # Handle Is Clip Filter. This is exclusively set here to handle the initial stage when the Clips are unselected
         if not params.get('is_clip'):
             _query.update({'is_clip': False})
 
+    # Fire the Mongo Mongo Query. _query contains the Filters set
     filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count))
     # .sort([('start_time', -1)])
 
-    total_count = filtered_results.count()
-    _real_count = filtered_results.count(1)
-    # count = len(filtered_results)
+    # Total Number of Results
+    total_count = filtered_results.count(with_limit_and_skip=False)
+    # Number of Results in this Query
+    _real_count = filtered_results.count(with_limit_and_skip=True)
 
-    # all_keys = {k for k in chain(*filtered_results)}
+    # Fetch All Filter Values
     merged_filers = __merge_filter_values(filtered_results)
 
+    # This is required to bring the cursor back to the initial position,
+    # as the above line results in the cursor being moved to the end position
     filtered_results.rewind()
 
-    pagination_links = []
-    link_template = '%s' % (request.path)
+    LOG.debug("Skip : %s, Total Count : %s, Result Count : %s" % (skip_page, total_count, _real_count))
 
     return render_template(
         'search.html',

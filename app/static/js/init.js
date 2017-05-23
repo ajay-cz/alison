@@ -16,9 +16,13 @@
         selectYears: 50 // Creates a dropdown of 15 years to control year
     });
      $('input,checkbox,radio').off('input').on('input',function(e){
+        $('#loader').addClass('shown');
+        $('#loader').removeClass('hidden');
         $('#filters').submit();
     });
     $('input:checkbox,input:radio').off('change').on('change',function(e){
+        $('#loader').addClass('shown');
+        $('#loader').removeClass('hidden');
         $('#filters').submit();
     });
   }); // end of document ready
