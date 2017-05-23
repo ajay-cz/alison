@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import logging
-import os
+# import logging
+# import os
 from collections import defaultdict
-import math
-from itertools import chain
+# import math
+# from itertools import chain
 
 import re
-from logging.handlers import RotatingFileHandler
+# from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template, request
 
@@ -145,7 +145,8 @@ def search_list():
                     if _value:
                         _query.update({_filter: {'$gte': _value}})
         # Handle Is Clip Filter. This is exclusively set here to handle the initial stage when the Clips are unselected
-        if not params.get('is_clip'):
+        print params.keys()
+        if not params.get('is_clip') and not (len(params.keys()) == 1 and 'page' in params.keys()):
             _query.update({'is_clip': False})
 
     # Fire the Mongo Mongo Query. _query contains the Filters set
@@ -165,7 +166,7 @@ def search_list():
     filtered_results.rewind()
 
     # LOG.debug("Skip : %s, Total Count : %s, Result Count : %s" % (skip_page, total_count, _real_count))
-
+    print _query
     return render_template(
         'search.html',
         filtered_data=filtered_results,

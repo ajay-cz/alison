@@ -170,7 +170,7 @@
                     {%- set pages_numbering = total_pages -%}
                     {%- set start_pages_numbering = total_pages - 10 -%}
                 {%- endif -%}
-                {{start_pages_numbering }}-{{pages_numbering}} : {{result_count}}-{{page_count}}
+                {# {{start_pages_numbering }}-{{pages_numbering}} : {{result_count}}-{{page_count}} #}
                 {%- set nav_left = 'disabled' -%}
                     {%- set nav_right = 'waves-effect' -%}
                     {%- if result_count < (skip + 1) * page_count -%}
