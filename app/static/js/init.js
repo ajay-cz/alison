@@ -15,5 +15,11 @@
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 50 // Creates a dropdown of 15 years to control year
     });
+     $('input,checkbox,radio').off('input').on('input',function(e){
+        $('#filters').submit();
+    });
+    $('input:checkbox,input:radio').off('change').on('change',function(e){
+        $('#filters').submit();
+    });
   }); // end of document ready
 })(jQuery); // end of jQuery name space

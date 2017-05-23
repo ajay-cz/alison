@@ -72,3 +72,7 @@ footer.page-footer {
 .main-panel {
     margin-left: 25% !important;
 }
+
+datalist {
+    display: none;
+}

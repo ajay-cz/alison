@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from collections import defaultdict
+import math
 from itertools import chain
 
 import re
@@ -57,6 +59,28 @@ def home_page():
     return render_template('home.html')
 
 
+def __merge_filter_values(c):
+    """
+
+    :param c:
+    :return:
+    """
+    results = defaultdict(set)
+    for i in c:
+        results['service'].add(i.get('service', ''))
+        results['Series Title'].add(i.get('title', {}).get('Series Title', ''))
+        results['Episode Title'].add(i.get('title', {}).get('Episode Title', ''))
+        results['media'].add(i.get('media', ''))
+        results['start_time'].add(i.get('start_time', ''))
+        results['end_time'].add(i.get('end_time', ''))
+        results['is_clip'].add(i.get('is_clip', False))
+        results['master_brand'].add(i.get('master_brand', False))
+        results['tags'].add(it for it in i.get('tags', []))
+        results['categories'].add(it for it in i.get('categories', []))
+
+    return results
+
+
 @app.route('/search')
 def search_list():
     """ Search Page
@@ -99,25 +123,29 @@ def search_list():
         if not params.get('is_clip'):
             _query.update({'is_clip': False})
 
-    print(_query)
-    print(skip_page)
-    print(requested_page_count)
-    filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count + 1)).sort(
-        [('start_time', -1)])
+    filtered_results = db[collection_name].find(_query).skip(int(skip_page)).limit(int(requested_page_count))
+    # .sort([('start_time', -1)])
 
-    count = filtered_results.count()
+    total_count = filtered_results.count()
+    _real_count = filtered_results.count(1)
+    # count = len(filtered_results)
 
     # all_keys = {k for k in chain(*filtered_results)}
-    # filtered_results.rewind()
+    merged_filers = __merge_filter_values(filtered_results)
+
+    filtered_results.rewind()
 
     pagination_links = []
     link_template = '%s' % (request.path)
-    print link_template
+
     return render_template(
         'search.html',
         filtered_data=filtered_results,
         all_keys=[],
-        result_count=count,
+        result_count=_real_count,
+        total_count=total_count,
         skip=skip_page,
-        page_count=requested_page_count
+        page_count=requested_page_count,
+        filter_values=merged_filers,
+        total_pages=int(round((total_count / requested_page_count) + 0.5))
     )

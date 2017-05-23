@@ -35,56 +35,108 @@
                     <div class="row">
                         <!-- Master Brand -->
                         <div class="input-field col s6">
-                            <input id="master_brand" type="text" name="master_brand" value="{{request.args.get('master_brand', '')}}">
+                            <input id="master_brand" type="text" name="master_brand" value="{{request.args.get('master_brand', '')}}" list="mb">
                             <label for="master_brand">Master Brand</label>
+                            <datalist id="mb">
+                                <option value="">
+                                {%- for value in filter_values.get('master_brand', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                         <!-- Service -->
                         <div class="input-field col s6">
-                            <input type="text" id="service" name="service" value="{{request.args.get('service', '')}}">
+                            <input type="text" id="service" name="service" value="{{request.args.get('service', '')}}" list="services">
+                            <datalist id="services">
+                                <option value="">
+                                {%- for value in filter_values.get('service', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                             <label for="service">Service</label>
                         </div>
                     </div>
                     <div class="row">
                         <!-- Master Brand -->
                         <div class="input-field col s6">
-                            <input id="title.Series Title" type="text" name="title.Series Title" value="{{request.args.get('title.Series Title', '')}}">
+                            <input id="title.Series Title" type="text" name="title.Series Title" value="{{request.args.get('title.Series Title', '')}}" list="sert">
                             <label for="title.Series Title">Series Title</label>
+                            <datalist id="sert">
+                                <option value="">
+                                {%- for value in filter_values.get('Series Title', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                         <!-- Service -->
                         <div class="input-field col s6">
-                            <input type="text" id="title.Episode Title" name="title.Episode Title" value="{{request.args.get('title.Episode Title', '')}}">
+                            <input type="text" id="title.Episode Title" name="title.Episode Title" value="{{request.args.get('title.Episode Title', '')}}" list="ept">
                             <label for="title.Episode Title">Episode Title</label>
+                            <datalist id="ept">
+                                <option value="">
+                                {%- for value in filter_values.get('Episode Title', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                     </div>
                     <div class="row">
                         <!-- Start & End Time -->
                         <div class="input-field col s6">
-                            <input id="start_time" type="date" class="datepicker" name="start_time" value="{{request.args.get('start_time', '')}}">
+                            <input id="start_time" type="date" class="datepicker" name="start_time" value="{{request.args.get('start_time', '')}}" list="st">
                             <label for="start_time">Start Time</label>
+                            <datalist id="st">
+                                <option value="">
+                                {%- for value in filter_values.get('start_time', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                         <div class="input-field col s6">
-                            <input id="end_time" type="date" class="datepicker" name="end_time" value="{{request.args.get('end_time', '')}}">
+                            <input id="end_time" type="date" class="datepicker" name="end_time" value="{{request.args.get('end_time', '')}}" list="et">
                             <label for="end_time">End Time</label>
+                            <datalist id="et">
+                                <option value="">
+                                {%- for value in filter_values.get('end_time', []) | sort -%}
+                                    <option value="{{- value -}}">
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                     </div>
                     <div class="row">
                         <!-- Categories & Tags -->
                         <div class="input-field col s6">
-                            <input name="categories" id="categories" type="date" class="datepicker">
+                            <input name="categories" id="categories" type="text" list="cat">
                             <label for="start_time">Categories</label>
+                            <datalist id="cat">
+                                <option value="">
+                                {%- for value in filter_values.get('categories', []) | sort -%}
+                                    {%- for _v in value -%}
+                                        <option value="{{- _v -}}">
+                                    {%- endfor -%}
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                         <div class="input-field col s6">
-                            <input name="tags" id="tags" type="date" class="datepicker">
+                            <input name="tags" id="tags" type="text" list="tag">
                             <label for="end_time">Tags</label>
+                            <datalist id="tag">
+                                <option value="">
+                                {%- for value in filter_values.get('tags', []) | sort -%}
+                                    {%- for _v in value -%}
+                                        <option value="{{- _v -}}">
+                                    {%- endfor -%}
+                                {%- endfor -%}
+                            </datalist>
                         </div>
                     </div>
                     <div class="row">
-                         <button class="btn teal waves-effect waves-light" type="submit">Apply Filters
+                         <button class="btn teal waves-effect waves-light col s6" type="submit">Apply Filters
                             <i class="material-icons right">send</i>
                          </button>
-                        <button class="btn teal waves-effect waves-light" type="reset">Reset Filters
+                         <a class="btn teal waves-effect waves-light col s6" href="/search">Reset Filters
                             <i class="material-icons right">clear_all</i>
-                         </button>
+                         </a>
                     </div>
                 </form>
             </div>
@@ -94,33 +146,48 @@
     <div class="col s9 "> {# main-panel - Change the Width on style.css if u change s9 to something else #}
         <div class="section card-panel hoverable">
             <div class="row">
-                  <div class="card-panel"> {{result_count}} Results Found</div>
+                  <div class="card-panel">
+                      <div class="col s6 left-align">Total {{total_count}} Results Found.</div>
+                      <div class="col s6 right-align">Showing {{result_count }} of Page {{ request.args.get('page', 1) }}</div>
+                  </div>
             </div>
             {%- if result_count > 0 -%}
+                {%- set start_pages_numbering = 1  -%}
+                {%- set pages_numbering = total_pages | int -%}
+                {%- if pages_numbering > 10 -%}
+                    {%- set pages_numbering = 10 -%}
+                    {%- if request.args.get('page', 1)|int > 8 and total_pages > 9 -%}
+                        {%- set pages_numbering = request.args.get('page', 1)|int + 10 -%}
+                        {%- set start_pages_numbering = request.args.get('page', 1)|int  -%}
+                    {%- endif -%}
+                {%- endif -%}
+
                 {%- set nav_left = 'disabled' -%}
                     {%- set nav_right = 'waves-effect' -%}
                     {%- if result_count < (skip + 1) * page_count -%}
                         {%- set nav_right = 'disabled' -%}
                     {%- endif -%}
-                {%- if result_count > (skip + 1) * page_count and skip > 0 -%}
+                {%- if request.args.get('page', 1) > 1 and  total_pages > 1-%}
                     {%- set nav_left = 'waves-effect' -%}
                 {%- endif -%}
                 <div class="row">
                 <ul class="center pagination">
 
                     <li class="{{nav_left}}">
-                        <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                        <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
                     </li>
-                    {%- for p in range(10) -%}
-                        {%- if p+1 == skip -%}
-                            <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                    {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
+                        {%- if p == request.args.get('page', 1) | int -%}
+                            <li class="active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
                         {%- else -%}
-                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                            {%- if result_count >= page_count -%}
+                                <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
+                            {%- endif -%}
                         {%- endif -%}
                     {%- endfor -%}
 
                     <li class="{{nav_right}}">
-                        <a href="{{- request.base_url -}}?page={{- skip + 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                        <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
                     </li>
                 </ul>
             </div>
@@ -135,6 +202,7 @@
                     {%- set cols = 3 %}
                     {%- endif -%}
                     {%- for item in filtered_data -%}
+                        {% set _stub = filtered_data.rewind() %}
                         {%- for column in filtered_data|slice(cols|int) %}
                             <div class="col s{{- (12/cols|int)|int -}}">
                                 {%- for item in column %}
@@ -142,26 +210,26 @@
                                     <div class="card-stacked">
                                         <div class="card-content">
                                             <div class="row">
-                                                <div class="left-align col s3"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') }}</div>
+                                                <div class="left-align col s3"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') or '-N.A-' }}</div>
                                                 <div class="center-align col s3">{{ item.media|default('-N.A-') }}</div>
                                                 <div class="center-align col s3">{%- if item.is_clip in [True, 'on', 'true', '1', 'yes', 't', 'y'] -%}<i class="material-icons">videocam</i> {%- else -%}<i class="material-icons">videocam_off</i>{%- endif -%} </div>
-                                                <div class="right-align col s3"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') }}</div>
+                                                <div class="right-align col s3"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') or '-N.A-' }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s3 left-align label-left">Series Title :</div>
-                                                <div class="col s9 right-align label-right">{{ item.title['Series Title']|default('-N.A-') }}</div>
+                                                <div class="col s9 right-align label-right">{{ item.title['Series Title']|default('-N.A-') or '-N.A-' }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s3 left-align label-left">Episode Title :</div>
-                                                <div class="col s9 right-align label-right">{{ item.title['Episode Title']|default('-N.A-') }}</div>
+                                                <div class="col s9 right-align label-right">{{ item.title['Episode Title']|default('-N.A-') or '-N.A-' }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s3 left-align label-left">Master Brand :</div>
-                                                <div class="col s9 right-align label-right">{{ item.master_brand|default('-N.A-') }}</div>
+                                                <div class="col s9 right-align label-right">{{ item.master_brand|trim|default('-N.A-') or '-N.A-' }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s3 left-align label-left">Service :</div>
-                                                <div class="col s9 right-align label-right">{{ item.service|default('-N.A-') }}</div>
+                                                <div class="col s9 right-align label-right">{{ item.service|trim|default('-N.A-') or '-N.A-' }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="col s1 left-align label-left">Tags</div>
@@ -182,9 +250,13 @@
                                                 <div class="col s1 left-align label-left">Categories</div>
                                                 <div class="col s11 right-align label-right">
                                                     {%- for cat in item.categories -%}
-                                                        <div class="chip">
-                                                            {{ cat }}
-                                                        </div>
+                                                        {%- if cat -%}
+                                                            <div class="chip">
+                                                                {{ cat }}
+                                                            </div>
+                                                        {%- else -%}
+                                                            '-N.A-'
+                                                        {%- endif -%}
                                                     {%- endfor -%}
                                                     {%- if not item.categories -%}-N.A-{%- endif -%}
                                                 </div>
@@ -203,18 +275,20 @@
                 <ul class="center pagination">
 
                     <li class="{{nav_left}}">
-                        <a href="{{- request.base_url -}}?page={{- skip -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                        <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
                     </li>
-                    {%- for p in range(10) -%}
-                        {%- if p == skip -%}
-                            <li class="active"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                    {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
+                        {%- if p == request.args.get('page', 1) | int -%}
+                            <li class="active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
                         {%- else -%}
-                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p + 1 -}}&{{- request.query_string -}}">{{p + 1}}</a></li>
+                            {%- if result_count >= page_count -%}
+                                <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
+                            {%- endif -%}
                         {%- endif -%}
                     {%- endfor -%}
 
                     <li class="{{nav_right}}">
-                        <a href="{{- request.base_url -}}?page={{- skip + 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                        <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
                     </li>
                 </ul>
             </div>
