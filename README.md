@@ -40,6 +40,8 @@ add query string cols=2 to view a 2 column layout. By default, the search page i
 
 This is a sample Web Application created with Python Flask with MongoDB as the Backend.
 The json dataset was Imported to the MongoDB.
+
+
 This project is about creating a web application with Python using Flask framework & MongoDB. To demonstrate the searching and filtering capability of a large data sets with the help of python and mongo DB. We use materialize for the UI designs.
 
 Basic application contains two main pages 1 ) The homepage and 2) The search page.

@@ -66,7 +66,7 @@ def asbool(s):
 @app.route('/')
 def home_page():
     """
-    Home Page
+    View Controller for the Home Page
     :return:
     """
 

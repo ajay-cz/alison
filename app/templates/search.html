@@ -1,318 +1,324 @@
-{% extends "base_template.html" %}
+{%- extends "base_template.html" -%}
+
 {%- block container -%}
-
-<div class="row">
-    <div class="col s4 card-panel hoverable fix-side-nav">
-            <div class="row center center-align">
-                <a class="btn btn-flat  darken-1 blue-grey disabled">Apply Filters</a>
-            </div>
-            <div class="row">
-                <form action="/search" class="col s12" id="filters" name="filters">
-                    <div class="row">
-                        <!-- Start & End Time -->
-                        <div class="input-field col s6">
-                            <input id="start_time" type="text" class="1_datepicker" name="start_time" value="{{request.args.get('start_time', '')}}" list="st">
-                            <label for="start_time">Start Time</label>
-                            <datalist id="st">
-                                <option value="">
-                                {%- for value in filter_values.get('start_time', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                        <div class="input-field col s6">
-                            <input id="end_time" type="text" class="1_datepicker" name="end_time" value="{{request.args.get('end_time', '')}}" list="et">
-                            <label for="end_time">End Time</label>
-                            <datalist id="et">
-                                <option value="">
-                                {%- for value in filter_values.get('end_time', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Master Brand -->
-                        <div class="input-field col s6">
-                            <input id="master_brand" type="text" name="master_brand" value="{{request.args.get('master_brand', '')}}" list="mb">
-                            <label for="master_brand">Master Brand</label>
-                            <datalist id="mb">
-                                <option value="">
-                                {%- for value in filter_values.get('master_brand', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                        <!-- Service -->
-                        <div class="input-field col s6">
-                            <input type="text" id="service" name="service" value="{{request.args.get('service', '')}}" list="services">
-                            <datalist id="services">
-                                <option value="">
-                                {%- for value in filter_values.get('service', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                            <label for="service">Service</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Master Brand -->
-                        <div class="input-field col s6">
-                            <input id="title.Series Title" type="text" name="title.Series Title" value="{{request.args.get('title.Series Title', '')}}" list="sert">
-                            <label for="title.Series Title">Series Title</label>
-                            <datalist id="sert">
-                                <option value="">
-                                {%- for value in filter_values.get('Series Title', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                        <!-- Service -->
-                        <div class="input-field col s6">
-                            <input type="text" id="title.Episode Title" name="title.Episode Title" value="{{request.args.get('title.Episode Title', '')}}" list="ept">
-                            <label for="title.Episode Title">Episode Title</label>
-                            <datalist id="ept">
-                                <option value="">
-                                {%- for value in filter_values.get('Episode Title', []) | sort -%}
-                                    <option value="{{- value -}}">
-                                {%- endfor -%}
-                            </datalist>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Categories & Tags -->
-                        <div class="input-field col s6">
-                            <select name="categories" id="categories">
-                                <option value="" {% if '' not in request.args.get('categories', '') -%}selected{%- endif -%}></option>
-                                {%- for _v in filter_values.get('categories', []) | sort -%}
-                                    <option value="{{- _v -}}" {% if _v in request.args.get('categories', '') -%}selected{%- endif -%}>{{ _v }}</option>
-                                {%- endfor -%}
-                            </select>
-                            <label for="categories">Categories</label>
-                        </div>
-                        <div class="input-field col s6">
-                            <select name="tags" id="tags">
-                                <option value="" {% if '' not in request.args.get('tags', '') -%}selected{%- endif -%}></option>
-                                {%- for _v in filter_values.get('tags', []) | sort -%}
-                                        <option value="{{- _v -}}" {% if _v in request.args.get('tags', '') -%}selected{%- endif -%}>{{ _v }}</option>
-                                {%- endfor -%}
-                            </select>
-                            <label for="tags">Tags</label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s8">
-                            <!-- Media -->
-                            <p class="col s4">
-                                <input name="media" type="radio" id="audio" value="audio" {% if request.args.get('media', '') in ['audio'] -%}checked="checked"{%- endif %}/>
-                                <label for="audio">Audio</label>
-                            </p>
-                            <p class="col s4">
-                                <input name="media" type="radio" id="video" value="video" {% if request.args.get('media', '') in ['video'] -%}checked="checked"{%- endif %}/>
-                                <label for="video">Video</label>
-                            </p>
-                            <p class="col s4">
-                                <input name="media" type="radio" id="all" value="" {% if request.args.get('media', '') not in ['audio', 'video'] -%}checked="checked"{%- endif %}/>
-                                <label for="all">All</label>
-                            </p>
-                        </div>
-                        <!-- Is clip -->
-                        <div class="input-field col s4">
-                            <p>
-                                <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
-                                <label for="is_clip">Is Clip</label>
-                            </p>
-                            <input type="hidden" id="is_clip_a" name="is_clip_a" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}value="on" {%- else -%}value="off" {%- endif -%}>
-                        </div>
-                    </div>
-                    <div class="row">
-                         <button class="btn blue-grey waves-effect waves-light col s5" type="submit">Apply Filters
-                            <i class="material-icons right">send</i>
-                         </button>
-                         <a class="btn blue-grey waves-effect waves-light col s5 right" href="/search">Reset Filters
-                            <i class="material-icons right">clear_all</i>
-                         </a>
-                    </div>
-                </form>
-            </div>
-            <!--</li>-->
-        <!--</ul>-->
-    </div>
-    <div class="col s8 main-panel"> {# main-panel - Change the Width on style.css if u change s9 to something else #}
-        <div class="progress hidden " id="loader">
-            <div class="indeterminate blue-grey"></div>
-        </div>
-        <div class="section card-panel hoverable">
-            <div class="row">
-                  <div class="card">
-                      <div class="col s6 left-align blue-grey-text text-darken-4">Total {{total_count}} Results Found.</div>
-                      {%- if result_count > 0 -%}
-                        <div class="col s6 right-align blue-grey-text text-darken-4">Showing {{result_count }} results of Page {{ request.args.get('page', 1) }}</div>
-                      {%- endif -%}
-                  </div>
-            </div>
-            {%- if result_count > 0 -%}
-                {%- set start_pages_numbering = 1  -%}
-                {%- set pages_numbering = total_pages | int -%}
-                {%- if pages_numbering > 10 -%}
-                    {%- set pages_numbering = 10 -%}
-                    {%- if request.args.get('page', 1)|int > 8 and total_pages > 9 -%}
-                        {%- set pages_numbering = request.args.get('page', 1)|int + 10 -%}
-                        {%- set start_pages_numbering = request.args.get('page', 1)|int  -%}
-                    {%- endif -%}
-                {%- endif -%}
-                {%- if pages_numbering  > total_pages -%}
-                    {%- set pages_numbering = total_pages -%}
-                    {%- set start_pages_numbering = total_pages - 10 -%}
-                {%- endif -%}
-                {# {{start_pages_numbering }}-{{pages_numbering}} : {{result_count}}-{{page_count}} #}
-                {%- set nav_left = 'disabled' -%}
-                    {%- set nav_right = 'waves-effect' -%}
-                    {%- if result_count < (skip + 1) * page_count -%}
-                        {%- set nav_right = 'disabled' -%}
-                    {%- endif -%}
-                {%- if request.args.get('page', 1) > 1 and  total_pages > 1-%}
-                    {%- set nav_left = 'waves-effect' -%}
-                {%- endif -%}
-                <div class="row blue-grey-text text-darken-4">
-                    <ul class="center pagination">
-
-                    <li class="{{nav_left}}">
-                        <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
-                    </li>
-                    {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
-                        {%- if p == request.args.get('page', 1) | int -%}
-                            <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
-                        {%- else -%}
-                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
-                        {%- endif -%}
-                    {%- endfor -%}
-
-                    <li class="{{nav_right}}">
-                        <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
-                    </li>
-                </ul>
+    <div class="row">
+        <!-- Filters Panel -->
+        <div class="col s4 card-panel hoverable fix-side-nav">
+                <div class="row center center-align">
+                    <a class="btn btn-flat  darken-1 blue-grey disabled">Apply Filters</a>
                 </div>
-            {%- endif -%}
                 <div class="row">
-             {#   {u'service': u'Bbc Radio Four', u'tags': [u''], u'media': u'Audio', u'start_time': u'2012-08-13', u'title': {u'Series Title': u'What Chance Change?', u'Episode Title': u'Episode 1', u'Brand Name': u'Micky Flanagan'}, u'is_clip': True, u'end_time': u'2012-08-20', u'master_brand': u'Bbc Radio Four', u'_id': ObjectId('5921e8e2531e701c507b942b'), u'categories': [u'Comedy', u'Standup']} #}
-                {%- if request.args.get('mode') != 'table' -%}
-                    {%- set cols = request.args.get('cols', 1)|int -%}
-                    {%- if cols < 1 -%}
-                    {%- set cols = 1 %}
-                    {%- elif cols > 3 -%}
-                    {%- set cols = 3 %}
+                    <form action="/search" class="col s12" id="filters" name="filters">
+                        <div class="row">
+                            <!-- Start & End Time -->
+                            <div class="input-field col s6">
+                                <input id="start_time" type="text" class="1_datepicker" name="start_time" value="{{request.args.get('start_time', '')}}" list="st">
+                                <label for="start_time">Start Time</label>
+                                <datalist id="st">
+                                    <option value="">
+                                    {%- for value in filter_values.get('start_time', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="end_time" type="text" class="1_datepicker" name="end_time" value="{{request.args.get('end_time', '')}}" list="et">
+                                <label for="end_time">End Time</label>
+                                <datalist id="et">
+                                    <option value="">
+                                    {%- for value in filter_values.get('end_time', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Master Brand -->
+                            <div class="input-field col s6">
+                                <input id="master_brand" type="text" name="master_brand" value="{{request.args.get('master_brand', '')}}" list="mb">
+                                <label for="master_brand">Master Brand</label>
+                                <datalist id="mb">
+                                    <option value="">
+                                    {%- for value in filter_values.get('master_brand', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                            </div>
+                            <!-- Service -->
+                            <div class="input-field col s6">
+                                <input type="text" id="service" name="service" value="{{request.args.get('service', '')}}" list="services">
+                                <datalist id="services">
+                                    <option value="">
+                                    {%- for value in filter_values.get('service', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                                <label for="service">Service</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Master Brand -->
+                            <div class="input-field col s6">
+                                <input id="title.Series Title" type="text" name="title.Series Title" value="{{request.args.get('title.Series Title', '')}}" list="sert">
+                                <label for="title.Series Title">Series Title</label>
+                                <datalist id="sert">
+                                    <option value="">
+                                    {%- for value in filter_values.get('Series Title', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                            </div>
+                            <!-- Service -->
+                            <div class="input-field col s6">
+                                <input type="text" id="title.Episode Title" name="title.Episode Title" value="{{request.args.get('title.Episode Title', '')}}" list="ept">
+                                <label for="title.Episode Title">Episode Title</label>
+                                <datalist id="ept">
+                                    <option value="">
+                                    {%- for value in filter_values.get('Episode Title', []) | sort -%}
+                                        <option value="{{- value -}}">
+                                    {%- endfor -%}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Categories & Tags -->
+                            <div class="input-field col s6">
+                                <select name="categories" id="categories">
+                                    <option value="" {% if '' not in request.args.get('categories', '') -%}selected{%- endif -%}></option>
+                                    {%- for _v in filter_values.get('categories', []) | sort -%}
+                                        <option value="{{- _v -}}" {% if _v in request.args.get('categories', '') -%}selected{%- endif -%}>{{ _v }}</option>
+                                    {%- endfor -%}
+                                </select>
+                                <label for="categories">Categories</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <select name="tags" id="tags">
+                                    <option value="" {% if '' not in request.args.get('tags', '') -%}selected{%- endif -%}></option>
+                                    {%- for _v in filter_values.get('tags', []) | sort -%}
+                                            <option value="{{- _v -}}" {% if _v in request.args.get('tags', '') -%}selected{%- endif -%}>{{ _v }}</option>
+                                    {%- endfor -%}
+                                </select>
+                                <label for="tags">Tags</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s8">
+                                <!-- Media -->
+                                <p class="col s4">
+                                    <input name="media" type="radio" id="audio" value="audio" {% if request.args.get('media', '') in ['audio'] -%}checked="checked"{%- endif %}/>
+                                    <label for="audio">Audio</label>
+                                </p>
+                                <p class="col s4">
+                                    <input name="media" type="radio" id="video" value="video" {% if request.args.get('media', '') in ['video'] -%}checked="checked"{%- endif %}/>
+                                    <label for="video">Video</label>
+                                </p>
+                                <p class="col s4">
+                                    <input name="media" type="radio" id="all" value="" {% if request.args.get('media', '') not in ['audio', 'video'] -%}checked="checked"{%- endif %}/>
+                                    <label for="all">All</label>
+                                </p>
+                            </div>
+                            <!-- Is clip -->
+                            <div class="input-field col s4">
+                                <p>
+                                    <input type="checkbox" id="is_clip" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}checked="checked" {%- endif %} name="is_clip"/>
+                                    <label for="is_clip">Is Clip</label>
+                                </p>
+                                <input type="hidden" id="is_clip_a" name="is_clip_a" {% if request.args.get('is_clip') in ['on', 'true', '1', 'yes', 't', 'y'] -%}value="on" {%- else -%}value="off" {%- endif -%}>
+                            </div>
+                        </div>
+                        <div class="row">
+                             <button class="btn blue-grey waves-effect waves-light col s5" type="submit">Apply Filters
+                                <i class="material-icons right">send</i>
+                             </button>
+                             <a class="btn blue-grey waves-effect waves-light col s5 right" href="/search">Reset Filters
+                                <i class="material-icons right">clear_all</i>
+                             </a>
+                        </div>
+                    </form>
+                </div>
+                <!--</li>-->
+            <!--</ul>-->
+        </div>
+        <!-- Data List Panel -->
+        <div class="col s8 main-panel"> {# main-panel - Change the Width on style.css if u change s9 to something else #}
+            <div class="progress hidden " id="loader">
+                <div class="indeterminate blue-grey"></div>
+            </div>
+            <div class="section card-panel hoverable">
+                <div class="row">
+                      <div class="card">
+                          <div class="col s6 left-align blue-grey-text text-darken-4">Total {{total_count}} Results Found.</div>
+                          {%- if result_count > 0 -%}
+                            <div class="col s6 right-align blue-grey-text text-darken-4">Showing {{result_count }} results of Page {{ request.args.get('page', 1) }}</div>
+                          {%- endif -%}
+                      </div>
+                </div>
+                {# Logic to Show / Hide Pagination Options #}
+                {%- if result_count > 0 -%}
+                    {%- set start_pages_numbering = 1  -%}
+                    {%- set pages_numbering = total_pages | int -%}
+                    {%- if pages_numbering > 10 -%}
+                        {%- set pages_numbering = 10 -%}
+                        {%- if request.args.get('page', 1)|int > 8 and total_pages > 9 -%}
+                            {%- set pages_numbering = request.args.get('page', 1)|int + 10 -%}
+                            {%- set start_pages_numbering = request.args.get('page', 1)|int  -%}
+                        {%- endif -%}
                     {%- endif -%}
-                    {%- for item in filtered_data -%}
-                        {% set _stub = filtered_data.rewind() %}
-                        {%- for column in filtered_data|slice(cols|int) %}
-                            <div class="col s{{- (12/cols|int)|int -}}">
-                                {%- for item in column %}
-                                    <div class="blue-grey lighten-5 card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
-                                    <div class="card-stacked">
-                                        <div class="card-content blue-grey-text text-darken-4">
-                                            <div class="row ">
-                                                <div class="left-align col s3">Start Time</div>
-                                                <div class="center-align col s3">Media Type</div>
-                                                <div class="center-align col s3">Clips </div>
-                                                <div class="right-align col s3">End Time</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="left-align col s3"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') or '-N.A-' }}</div>
-                                                <div class="center-align col s3">{{ item.media|default('-N.A-') }}</div>
-                                                <div class="center-align col s3">{%- if item.is_clip in [True, 'on', 'true', '1', 'yes', 't', 'y'] -%}Available {%- else -%}Not Available{%- endif -%} </div>
-                                                <div class="right-align col s3"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') or '-N.A-' }}</div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col s3 left-align label-left">Series Title :</div>
-                                                <div class="col s9 right-align label-right">{{ item.title['Series Title']|default('-N.A-') or '-N.A-' }}</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s3 left-align label-left">Episode Title :</div>
-                                                <div class="col s9 right-align label-right">{{ item.title['Episode Title']|default('-N.A-') or '-N.A-' }}</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s3 left-align label-left">Master Brand :</div>
-                                                <div class="col s9 right-align label-right">{{ item.master_brand|trim|default('-N.A-') or '-N.A-' }}</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s3 left-align label-left">Service :</div>
-                                                <div class="col s9 right-align label-right">{{ item.service|trim|default('-N.A-') or '-N.A-' }}</div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col s1 left-align label-left">Tags</div>
-                                                <div class="col s11 right-align label-right">
-                                                    {%- for tag in item.tags -%}
-                                                        {%- if tag -%}
-                                                            <div class="chip">
-                                                                {{ tag }}
-                                                            </div>
-                                                        {%- else -%}
-                                                            -N.A-
-                                                        {%- endif -%}
-                                                    {%- endfor -%}
-                                                    {%- if not item.tags -%}-N.A-{%- endif -%}
+                    {%- if pages_numbering  > total_pages -%}
+                        {%- set pages_numbering = total_pages -%}
+                        {%- set start_pages_numbering = total_pages - 10 -%}
+                    {%- endif -%}
+                    {# {{start_pages_numbering }}-{{pages_numbering}} : {{result_count}}-{{page_count}} #}
+                    {%- set nav_left = 'disabled' -%}
+                        {%- set nav_right = 'waves-effect' -%}
+                        {%- if result_count < (skip + 1) * page_count -%}
+                            {%- set nav_right = 'disabled' -%}
+                        {%- endif -%}
+                    {%- if request.args.get('page', 1) > 1 and  total_pages > 1-%}
+                        {%- set nav_left = 'waves-effect' -%}
+                    {%- endif -%}
+
+                    {# Top Pagination Control #}
+                    <div class="row blue-grey-text text-darken-4">
+                        <ul class="center pagination">
+
+                        <li class="{{nav_left}}">
+                            <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                        </li>
+                        {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
+                            {%- if p == request.args.get('page', 1) | int -%}
+                                <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
+                            {%- else -%}
+                                <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
+                            {%- endif -%}
+                        {%- endfor -%}
+
+                        <li class="{{nav_right}}">
+                            <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                        </li>
+                    </ul>
+                    </div>
+                {%- endif -%}
+                    <div class="row">
+                    {%- if request.args.get('mode') != 'table' -%}
+                        {%- set cols = request.args.get('cols', 1)|int -%}
+                        {%- if cols < 1 -%}
+                        {%- set cols = 1 %}
+                        {%- elif cols > 3 -%}
+                        {%- set cols = 3 %}
+                        {%- endif -%}
+
+                        {# Code to Iterate through the List of Records from the Database #}
+
+                        {%- for item in filtered_data -%}
+                            {% set _stub = filtered_data.rewind() %}
+                            {%- for column in filtered_data|slice(cols|int) %}
+                                <div class="col s{{- (12/cols|int)|int -}}">
+                                    {%- for item in column %}
+                                        <div class="blue-grey lighten-5 card {{item.categories|length}} {% if item.tags|length > 3 and item.categories|length > 3 %}large {% else %} medium{% endif %}">
+                                            <div class="card-stacked">
+                                                <div class="card-content blue-grey-text text-darken-4">
+                                                {# Start Time, Media, Is clip, end Time #}
+                                                <div class="row ">
+                                                    <div class="left-align col s3">Start Time</div>
+                                                    <div class="center-align col s3">Media Type</div>
+                                                    <div class="center-align col s3">Clips </div>
+                                                    <div class="right-align col s3">End Time</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="left-align col s3"><i class="material-icons">today</i>{{ item.start_time|default('-N.A-') or '-N.A-' }}</div>
+                                                    <div class="center-align col s3">{{ item.media|default('-N.A-') }}</div>
+                                                    <div class="center-align col s3">{%- if item.is_clip in [True, 'on', 'true', '1', 'yes', 't', 'y'] -%}Available {%- else -%}Not Available{%- endif -%} </div>
+                                                    <div class="right-align col s3"><i class="material-icons">today</i>{{ item.end_time|default('-N.A-') or '-N.A-' }}</div>
+                                                </div>
+                                                {# Start Time, Media, Is clip, end Time #}
+                                                <hr>
+                                                {#- Series Title -#}
+                                                <div class="row">
+                                                    <div class="col s3 left-align label-left">Series Title :</div>
+                                                    <div class="col s9 right-align label-right">{{ item.title['Series Title']|default('-N.A-') or '-N.A-' }}</div>
+                                                </div>
+                                                {#- Episode Title -#}
+                                                <div class="row">
+                                                    <div class="col s3 left-align label-left">Episode Title :</div>
+                                                    <div class="col s9 right-align label-right">{{ item.title['Episode Title']|default('-N.A-') or '-N.A-' }}</div>
+                                                </div>
+                                                {#- Master Brand -#}
+                                                <div class="row">
+                                                    <div class="col s3 left-align label-left">Master Brand :</div>
+                                                    <div class="col s9 right-align label-right">{{ item.master_brand|trim|default('-N.A-') or '-N.A-' }}</div>
+                                                </div>
+                                                {#- Service -#}
+                                                <div class="row">
+                                                    <div class="col s3 left-align label-left">Service :</div>
+                                                    <div class="col s9 right-align label-right">{{ item.service|trim|default('-N.A-') or '-N.A-' }}</div>
+                                                </div>
+                                                {#- Tags -#}
+                                                <div class="row">
+                                                    <div class="col s1 left-align label-left">Tags</div>
+                                                    <div class="col s11 right-align label-right">
+                                                        {%- for tag in item.tags -%}
+                                                            {%- if tag -%}
+                                                                <div class="chip">
+                                                                    {{ tag }}
+                                                                </div>
+                                                            {%- else -%}
+                                                                -N.A-
+                                                            {%- endif -%}
+                                                        {%- endfor -%}
+                                                        {%- if not item.tags -%}-N.A-{%- endif -%}
+                                                    </div>
+                                                </div>
+                                                {#- Categories -#}
+                                                <div class="row">
+                                                    <div class="col s1 left-align label-left">Categories</div>
+                                                    <div class="col s11 right-align label-right">
+                                                        {%- for cat in item.categories -%}
+                                                            {%- if cat -%}
+                                                                <div class="chip">
+                                                                    {{ cat }}
+                                                                </div>
+                                                            {%- else -%}
+                                                                '-N.A-'
+                                                            {%- endif -%}
+                                                        {%- endfor -%}
+                                                        {%- if not item.categories -%}-N.A-{%- endif -%}
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col s1 left-align label-left">Categories</div>
-                                                <div class="col s11 right-align label-right">
-                                                    {%- for cat in item.categories -%}
-                                                        {%- if cat -%}
-                                                            <div class="chip">
-                                                                {{ cat }}
-                                                            </div>
-                                                        {%- else -%}
-                                                            '-N.A-'
-                                                        {%- endif -%}
-                                                    {%- endfor -%}
-                                                    {%- if not item.categories -%}-N.A-{%- endif -%}
-                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {%- endfor %}
                                 </div>
-                                {%- endfor %}
-                            </div>
-                        {%- endfor %}
-                    {%- endfor -%}
-                {%- endif -%}
-            </div>
-            {%- if result_count > 0 -%}
-                <div class="row">
-                <ul class="center pagination">
+                            {%- endfor %}
+                        {%- endfor -%}
+                    {%- endif -%}
+                </div>
+                    {# Bottom Pagination Control #}
+                    {%- if result_count > 0 -%}
+                        <div class="row">
+                            <ul class="center pagination">
 
-                    <li class="{{nav_left}}">
-                        <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
-                    </li>
-                    {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
-                        {%- if p == request.args.get('page', 1) | int -%}
-                            <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
-                        {%- else -%}
-                            <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
-                        {%- endif -%}
-                    {%- endfor -%}
+                            <li class="{{nav_left}}">
+                                <a href="{{- request.base_url -}}?page={{- 1 -}}&{{- request.query_string -}}"><i class="material-icons">chevron_left</i></a>
+                            </li>
+                            {%- for p in range(start_pages_numbering, pages_numbering + 1) -%}
+                                {%- if p == request.args.get('page', 1) | int -%}
+                                    <li class="blue-grey active"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{p}}</a></li>
+                                {%- else -%}
+                                    <li class="waves-effect"><a href="{{- request.base_url -}}?page={{- p -}}&{{- request.query_string -}}">{{- p -}}</a></li>
+                                {%- endif -%}
+                            {%- endfor -%}
 
-                    <li class="{{nav_right}}">
-                        <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
-                    </li>
-                </ul>
+                            <li class="{{nav_right}}">
+                                <a href="{{- request.base_url -}}?page={{- total_pages -}}&{{- request.query_string -}}"><i class="material-icons">chevron_right</i></a>
+                            </li>
+                        </ul>
+                        </div>
+                    {%- endif -%}
             </div>
-            {%- endif -%}
         </div>
     </div>
-</div>
-
 {%- endblock -%}
-{# block scripts -%}
-    {{ super() }}
-    <script>
-        (function($){
-            $(function(){
-                $('.button-collapse').sideNav('show');
-            })
-        })(jQuery);
-    </script>
-{%- endblock #}
+
 

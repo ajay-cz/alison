@@ -1,6 +1,6 @@
 (function($){
   $(function(){
-
+    // Initialize Materialize Components
     $('.button-collapse').sideNav('show');
     $('.parallax').parallax();
     $('.datepicker').pickadate({
@@ -16,16 +16,18 @@
         selectYears: 50 // Creates a dropdown of 15 years to control year
     });
     $('select').material_select();
-     $('input,checkbox,radio, select').off('input').on('input',function(e){
+
+//     $('input,checkbox,radio, select').off('input').on('input',function(e){
 //        $('#loader').addClass('shown');
 //        $('#loader').removeClass('hidden');
 //        $('#filters').submit();
-    });
-    $('select').off('change').on('change',function(e){
+//    });
+//    $('select').off('change').on('change',function(e){
 //        $('#loader').addClass('shown');
 //        $('#loader').removeClass('hidden');
 //        $('#filters').submit();
-    });
+//    });
+
     $('input:checkbox, input:radio').off('change').on('change',function(e){
 //        $('#loader').addClass('shown');
 //        $('#loader').removeClass('hidden');
@@ -40,9 +42,10 @@
         }
 //        $('#filters').submit();
     });
+    // Shows the Loader during Pagination
     $('a').off('click').on('click', function(){
-//         $('#loader').addClass('shown');
-//         $('#loader').removeClass('hidden');
+         $('#loader').addClass('shown');
+         $('#loader').removeClass('hidden');
     });
   }); // end of document ready
 })(jQuery); // end of jQuery name space
