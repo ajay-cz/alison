@@ -17,18 +17,18 @@
     });
     $('select').material_select();
      $('input,checkbox,radio, select').off('input').on('input',function(e){
-        $('#loader').addClass('shown');
-        $('#loader').removeClass('hidden');
-        $('#filters').submit();
+//        $('#loader').addClass('shown');
+//        $('#loader').removeClass('hidden');
+//        $('#filters').submit();
     });
     $('select').off('change').on('change',function(e){
-        $('#loader').addClass('shown');
-        $('#loader').removeClass('hidden');
-        $('#filters').submit();
+//        $('#loader').addClass('shown');
+//        $('#loader').removeClass('hidden');
+//        $('#filters').submit();
     });
     $('input:checkbox, input:radio').off('change').on('change',function(e){
-        $('#loader').addClass('shown');
-        $('#loader').removeClass('hidden');
+//        $('#loader').addClass('shown');
+//        $('#loader').removeClass('hidden');
         if($(this).is(':checked')){
            $('#is_clip_a').val('on');
            $('#is_clip').val('on');
@@ -38,11 +38,11 @@
             $('#is_clip').val('off');
             $('#is_clip').prop('checked', false);
         }
-        $('#filters').submit();
+//        $('#filters').submit();
     });
     $('a').off('click').on('click', function(){
-         $('#loader').addClass('shown');
-         $('#loader').removeClass('hidden');
+//         $('#loader').addClass('shown');
+//         $('#loader').removeClass('hidden');
     });
   }); // end of document ready
 })(jQuery); // end of jQuery name space
