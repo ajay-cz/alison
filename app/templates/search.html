@@ -83,21 +83,23 @@
                         <div class="row">
                             <!-- Categories & Tags -->
                             <div class="input-field col s6">
-                                <select name="categories" id="categories">
-                                    <option value="" {% if '' not in request.args.get('categories', '') -%}selected{%- endif -%}></option>
-                                    {%- for _v in filter_values.get('categories', []) | sort -%}
-                                        <option value="{{- _v -}}" {% if _v in request.args.get('categories', '') -%}selected{%- endif -%}>{{ _v }}</option>
+                                <input name="categories" id="categories" type="text" value="{{request.args.get('categories', '')}}" list="cats">
+                                <datalist id="cats">
+                                    <option value="">
+                                    {%- for value in filter_values.get('categories', []) | sort -%}
+                                        <option value="{{- value -}}">
                                     {%- endfor -%}
-                                </select>
+                                </datalist>
                                 <label for="categories">Categories</label>
                             </div>
                             <div class="input-field col s6">
-                                <select name="tags" id="tags">
-                                    <option value="" {% if '' not in request.args.get('tags', '') -%}selected{%- endif -%}></option>
-                                    {%- for _v in filter_values.get('tags', []) | sort -%}
-                                            <option value="{{- _v -}}" {% if _v in request.args.get('tags', '') -%}selected{%- endif -%}>{{ _v }}</option>
+                                <input name="tags" id="tags" type="text" list="tag" value="{{request.args.get('tags', '')}}">
+                                <datalist id="tag">
+                                    <option value="">
+                                    {%- for value in filter_values.get('tags', []) | sort -%}
+                                        <option value="{{- value -}}">
                                     {%- endfor -%}
-                                </select>
+                                </datalist>
                                 <label for="tags">Tags</label>
                             </div>
                         </div>

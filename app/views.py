@@ -172,7 +172,9 @@ def search_list():
     # as the above line results in the cursor being moved to the end position
     filtered_results.rewind()
 
-    print _query
+    # Mongo Query
+    print(_query)
+    # Returns the Rendered HTML as response
     return render_template(
         'search.html',
         filtered_data=filtered_results,
